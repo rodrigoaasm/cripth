@@ -5,7 +5,11 @@
  */
 package mycriprsa;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -21,7 +25,8 @@ import java.util.logging.Logger;
  */
 public class MyRsaKey {
 
-    public final static String ALGORITHM = "RSA";
+    private final static String ALGORITHM = "RSA";
+    private final static String NAMEFILES = "ccr";
     private PrivateKey aPrivate;
     private PublicKey aPublic;
 
@@ -30,31 +35,86 @@ public class MyRsaKey {
         this.aPublic = aPublic;
     }    
 
-    /*Instancia um objeto MyRsaKey, e gera uma chave publica e privada*/
-    public static MyRsaKey getInstance(){
+    /*Instancia um objeto MyRsaKey, gerando uma chave publica e privada*/
+    public static MyRsaKey newInstance(){
         KeyPairGenerator keyGen = null;
         try {  
             keyGen = KeyPairGenerator.getInstance(ALGORITHM);
         } catch (NoSuchAlgorithmException ex) {
             Logger.getLogger(MyRsaKey.class.getName()).log(Level.SEVERE, null, ex);
         }
-        keyGen.initialize(1024);//Definindo o tamanho da chave publica    
+        keyGen.initialize(2048);//Definindo o tamanho da chave publica    
         KeyPair key = keyGen.generateKeyPair();//gerado as chaves
         
         return (new MyRsaKey(key.getPrivate(),key.getPublic()));
     }
+
+    //Recuperando a chave publica
+    public static PublicKey loadInstancePublicKey(){
+        ObjectInputStream ois = null;
+        PublicKey ch = null;
+        try {
+            ois = new ObjectInputStream (new FileInputStream (NAMEFILES+".public"));//Abrir arquivo de entrada
+            ch = (PublicKey) ois.readObject();//Faz a leitura do objeto "chave publica"
+        ois.close();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(MyRsaKey.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(MyRsaKey.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) { 
+            Logger.getLogger(MyRsaKey.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return ch;
+    }
     
-    public void storeKey(String namefile){
-         //Abrindo arquivo e salvando ultimo codigo gerado
+    //Recuperando chave privada
+    public static PrivateKey loadInstancePrivateKey(){
+        ObjectInputStream ois;
+        PrivateKey ch = null;
+        try {
+            ois = new ObjectInputStream (new FileInputStream (NAMEFILES+".private"));//Abri arquivo de entrada
+            ch = (PrivateKey) ois.readObject();//Faz a leitura do objeto "chave privada"
+        ois.close();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(MyRsaKey.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(MyRsaKey.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(MyRsaKey.class.getName()).log(Level.SEVERE, null, ex);
+        }        
+        return ch;
+    }
+    
+    //Persiste em arquivo a chave publica
+    public void storePublicKey(){
+         //Abrindo arquivo e salvando a chave publica que será distribuida
         FileOutputStream fileOutput;       
         try {//Se o houve algum erro ele não grava a informação
-            fileOutput = new FileOutputStream(namefile+".public");
+            fileOutput = new FileOutputStream(NAMEFILES+".public");
             ObjectOutputStream objfileOutput = new ObjectOutputStream(fileOutput);
-            objfileOutput.writeBytes(aPublic.toString());
+            objfileOutput.writeObject(aPublic);//Escrevendo Objeto em arquivo
             objfileOutput.flush();
             objfileOutput.close();
         } catch (Exception ex) {
-            return;
+             Logger.getLogger(MyRsaKey.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    //Persiste em arquivo a chave privada
+    public void storePrivateKey(){
+         //Abrindo arquivo e salvando a chave privada 
+        FileOutputStream fileOutput;       
+        try {//Se o houve algum erro ele não grava a informação.
+            fileOutput = new FileOutputStream(NAMEFILES+".private");
+            ObjectOutputStream objfileOutput = new ObjectOutputStream(fileOutput);
+            objfileOutput.writeObject(aPrivate);//Escrevendo Objeto em arquivo
+            objfileOutput.flush();
+            objfileOutput.close();
+        } catch (Exception ex) {
+             Logger.getLogger(MyRsaKey.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    
 }
