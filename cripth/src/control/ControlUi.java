@@ -7,16 +7,17 @@ package control;
 
 
 
+import cript.MyEncrypt;
 import cript.MyRsaKey;
 import cript.limit.InterfaceMessage;
 import java.io.IOException;
 import java.net.InetAddress;
-import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
-import model.Contact;
 import model.Conversation;
+import model.MyMessage;
+import tools.TreeWord;
 
 
 /**
@@ -30,6 +31,7 @@ public class ControlUi {
     private Conversation arrConv;
     private MyRsaKey RSAkey;
     private boolean concOk;
+    private TreeWord tWord;
     
     /*Contrutor da classe*/
     public ControlUi (){
@@ -40,8 +42,9 @@ public class ControlUi {
         RSAkey = MyRsaKey.newInstance();
         concOk= false;
         ms = new ManagerSend();
+        tWord = new TreeWord("INIT\nINITOK\nMSG\nCLOSEC");//Instaciado leitor de protocolo mySCRM
         try {
-            mr = new ManagerReceiver(this);
+            mr = new ManagerReceiver(this,tWord);
             mr.start();
         } catch (IOException ex) {
             ui.msg("Erro na entrada da rede!", "Não foi possivel inicializar o modulo de receptor de rede ",
@@ -53,12 +56,14 @@ public class ControlUi {
         InetAddress ip;
         ip = InetAddress.getByName(ipStr);
         mr.waitingRespInit();
-        ms.first(ip,RSAkey.getPublicKey(),ManagerSend.INIT);        
+        ms.first(ip,RSAkey.getPublicKeyStringMode(),ManagerSend.INIT);        
     }
     /*Método responsavel por acionar o envio da mensagem*/
-    public void sendMsgReq(String txt){        
+    public void sendMsgReq(String txt){
+        MyMessage m = new MyMessage(txt,0,0);
+//        arrConv.addMessage(m);
         try {
-            ms.sendMsg("");
+            ms.sendMsg(m,arrConv);
         } catch (Exception ex) {
             Logger.getLogger(ControlUi.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -67,14 +72,35 @@ public class ControlUi {
     public void initConversation(InetAddress ip,String pk,boolean needInitOk) throws IOException{        
         arrConv = new Conversation(pk,ip);
         if(needInitOk){
-            ms.first(ip,RSAkey.getPublicKey(),ManagerSend.INITOK);
+            ms.first(ip,RSAkey.getPublicKeyStringMode(),ManagerSend.INITOK);
         }
         concOk=true;
-        System.out.print("Estabelecida conexão.");
         ui.msg("Conexão estabelecida!","Estabelecida com sucesso", JOptionPane.INFORMATION_MESSAGE);
     }
     
     public static void main(String [] args){
        new ControlUi();
+    }
+
+    void toAnalyzePossibleMessage(String dataSem) {        
+        String keyAES = dataSem.substring(0, 255);
+        String cont = dataSem.substring(256);
+        try {            
+            cont = new String( MyEncrypt.decrypt(RSAkey.getPrivateKey(),
+                    cont.getBytes(),keyAES.getBytes()),"ISO-8859-1");
+        } catch (Exception ex) {
+            Logger.getLogger(ControlUi.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        System.out.println(cont);
+        String[] subCont = cont.split(" ");
+        
+        switch(tWord.scanWord(subCont[0])){
+            case 2:{
+                System.out.println(subCont[1]);
+            }
+            
+            default:
+                break;
+        }
     }
 }

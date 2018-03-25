@@ -5,6 +5,8 @@
  */
 package control;
 
+import cript.MyEncrypt;
+import cript.MyRsaKey;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -12,6 +14,7 @@ import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import model.Conversation;
 import model.MyMessage;
 
 /**
@@ -31,8 +34,7 @@ class ManagerSend {
         client = new Socket(ipServer,4505);
         
         PrintWriter out = new PrintWriter(client.getOutputStream(), true);
-        BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
-        
+       // BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));        
         out.println(cab + key);
         out.flush();        
         client.close();
@@ -41,8 +43,20 @@ class ManagerSend {
     public void setAddress(String ip) throws UnknownHostException{
         ipServer = InetAddress.getByName(ip);
     }
-    
-    public void sendMsg(String msg) throws IOException {
-       
-    }    
+
+    void sendMsg(MyMessage m, Conversation arrConv) throws Exception {
+        ipServer = arrConv.getIp();
+        client = new Socket(ipServer,4505);
+        PrintWriter out = new PrintWriter(client.getOutputStream(), true);
+        
+        MyRsaKey rsa = MyRsaKey.newInstance();
+     
+        byte[][] msgEncrypt = MyEncrypt.encrypt(rsa.getPublicKey(),"MSG " + m.getCont());
+        String pct = new String(msgEncrypt[1],"ISO-8859-1")+ new String(msgEncrypt[0],"ISO-8859-1");
+        System.err.println("***" + pct+ "***");
+        
+        out.print(pct);
+        out.flush();
+        out.close();
+    }
 }

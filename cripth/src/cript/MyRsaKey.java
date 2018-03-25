@@ -117,14 +117,24 @@ public class MyRsaKey {
         }
     }
 
-    //Retorna chave em modo texto.
-    public String getPublicKey() {
+    //Retorna chave publica em modo texto.
+    public String getPublicKeyStringMode() {
         byte[] keyInByte = aPublic.getEncoded();//Converte key em um array de bytes
         try {//Converte Array de bytes em String
             return new String(keyInByte,"ISO-8859-1");
         } catch (UnsupportedEncodingException ex) {
             return "";
         }
+    }
+    
+    //Retorna objeto publickey
+    public PublicKey getPublicKey(){
+        return aPublic;
+    }
+    
+    //Retorna chave 
+    public PrivateKey getPrivateKey(){
+        return aPrivate;
     }
     
     

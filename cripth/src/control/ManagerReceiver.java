@@ -25,10 +25,10 @@ public class ManagerReceiver extends Thread{
     private InetAddress listCont;
     private boolean waitRespInit;
 
-    public ManagerReceiver(ControlUi ctr) throws IOException {
+    public ManagerReceiver(ControlUi ctr,TreeWord tWord) throws IOException {
         sPeer = new ServerSocket(4505);
         this.ctr=ctr;
-        tWord = new TreeWord("INIT\nINITOK\nMSG\nCLOSEC");//Instaciado leitor de protocolo mySCRM
+        this.tWord = tWord;       
         listCont=null;
         waitRespInit=false;
     }
@@ -61,20 +61,20 @@ public class ManagerReceiver extends Thread{
                 dataSem += scanner.nextLine();
             }
             
-            String [] sem = dataSem.split(" ");//Dividido semántica
+            String [] sem = dataSem.split(" ",2);//Dividido semántica
             
-            sem[0]+=" ";  
-            System.out.println(tWord.scanWord(sem[0]));
+            sem[0]+=" ";            
             switch(tWord.scanWord(sem[0])){//Intepretando comando mySCRM                
-                case 0:{
-                    if(listCont==null && !waitRespInit){
+                case 0:{//Recebendo um pedido de conexão
+                    if(listCont==null && !waitRespInit){/*Se o sistema não estiver esperando
+                        uma resposta de conexão e não tiver nenhuma conexão ativa*/
                         try {                            
-                            ctr.initConversation(cPeer.getInetAddress(),sem[1],true);
+                            ctr.initConversation(cPeer.getInetAddress(),sem[1],true);//Inicia uma conversão e retorna positivo
                             listCont = cPeer.getInetAddress();
                         } catch (IOException ex) {
                             Logger.getLogger(ManagerReceiver.class.getName()).log(Level.SEVERE, null, ex);
                         }                        
-                    }else{
+                    }else{//fecha conexão sem resposta
                         try {
                         cPeer.close();
                         } catch (IOException ex) {
@@ -84,10 +84,10 @@ public class ManagerReceiver extends Thread{
                 }                    
                     break;
                     
-                case 1:{
+                case 1:{//Recebendo confirmação de conexão
                     if(listCont==null && waitRespInit){
                         try {
-                            ctr.initConversation(cPeer.getInetAddress(),sem[1],false);
+                            ctr.initConversation(cPeer.getInetAddress(),sem[1],false);//Inicia conversa 
                             listCont = cPeer.getInetAddress();
                         } catch (IOException ex) {
                             Logger.getLogger(ManagerReceiver.class.getName()).log(Level.SEVERE, null, ex);
@@ -95,13 +95,13 @@ public class ManagerReceiver extends Thread{
                     }
                     break;
                 }    
-                case 2:
-                    break;
-                    
-                case 3:
-                    break;
                 
-                default:break;
+                default:{
+                    if(listCont == cPeer.getInetAddress()){
+                        ctr.toAnalyzePossibleMessage(dataSem);
+                    }
+                }
+                    break;
             }
             
         }
