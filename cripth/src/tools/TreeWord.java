@@ -31,10 +31,10 @@ public class TreeWord {
         lastNode = p;
         statusScan = 0;
         words = dic.split("\n");  //Subdividido o dicionário em palavras      
-        
+        int i =0;
         
         for(String w: words){ //Varrendo todas as palavras   
-            int i =0;
+            
             char [] wordsPrimitiveType = w.toCharArray();//Convertendo a String em Vetor de primitivas
             tP = p;
             for( char a : wordsPrimitiveType){//Varredo letras de uma palavra
@@ -69,9 +69,9 @@ public class TreeWord {
     /**Auxilia na contrução da String que contém a estrutura da arvore **/
     private String assistToString(NodeTreeWord node, String text){
         ArrayList<NodeTreeWord> listNode;
+        int i =0;
         
-        while((listNode = node.getListProx()).size()>0){ //Busca por listas de nós filhos não vazias. 
-            int i =0;
+        while((listNode = node.getListProx()).size()>0){ //Busca por listas de nós filhos não vazias.            
             text += " < ";
             NodeTreeWord ntw = listNode.get(i); //Varre a lista de nós filhos
             text +=  ntw.getLet()+ " ";
@@ -95,13 +95,15 @@ public class TreeWord {
     
     /*Faz a comparação se uma letra está contida em uma palavra, a entrada da palavra é 
     feita de chamada a chamada*/
-    public int scanSimple(char c){     
+    public int scanSimple(char c){   
+        System.err.println(c);
         try{
             lastNode = linearSearch(lastNode, c);//Busca a letra na lista de nós filhos
             statusScan = IN_RECOGNITION;//Se o nó em questão não for final, defini o estado como "Em Reconhecimento"
-        }catch(Exception e){//Caso seja final defini se a palavra é conhecida ou não.   
+        }catch(Exception e){//Caso seja final defini se a palavra é conhecida ou não.  
             
             if(c == ' ' && statusScan == IN_RECOGNITION && lastNode.isFinal()){
+                System.err.println("Reconhecido");
                 statusScan = RECOGNIZED;
                 int id = lastNode.getId();//Se reconhecida a palvra retona o id dela presente no ultimo nó
                 lastNode = p;                

@@ -173,7 +173,7 @@ public class InterfaceMessage extends javax.swing.JFrame {
     private void jMenuIConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuIConnectActionPerformed
         String ip = JOptionPane.showInputDialog(this, "IP");        // TODO add your handling code here:
         try {
-            control.establishConnection(ip);
+            control.requestConnection(ip);
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage(), "ERRO DE CONEXÃO", JOptionPane.ERROR_MESSAGE);
         }
@@ -190,8 +190,8 @@ public class InterfaceMessage extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea writeMsg;
     // End of variables declaration//GEN-END:variables
-
-    public void msgError() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    
+    public void msg(String title,String body,int msgType ) {
+        JOptionPane.showMessageDialog(this, title, body,msgType);
     }
 }

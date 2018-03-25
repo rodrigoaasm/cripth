@@ -6,16 +6,13 @@
 package control;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import sun.security.x509.IPAddressName;
 import tools.TreeWord;
-
 
 /**
  *
@@ -26,12 +23,18 @@ public class ManagerReceiver extends Thread{
     private ControlUi ctr;
     private TreeWord tWord;
     private InetAddress listCont;
+    private boolean waitRespInit;
 
     public ManagerReceiver(ControlUi ctr) throws IOException {
         sPeer = new ServerSocket(4505);
         this.ctr=ctr;
         tWord = new TreeWord("INIT\nINITOK\nMSG\nCLOSEC");//Instaciado leitor de protocolo mySCRM
         listCont=null;
+        waitRespInit=false;
+    }
+    
+    void waitingRespInit() {
+        waitRespInit=true;
     }
     
     @Override
@@ -60,14 +63,13 @@ public class ManagerReceiver extends Thread{
             
             String [] sem = dataSem.split(" ");//Dividido semántica
             
-            sem[0]+=" ";
-            System.err.println(sem[0]);
+            sem[0]+=" ";  
+            System.out.println(tWord.scanWord(sem[0]));
             switch(tWord.scanWord(sem[0])){//Intepretando comando mySCRM                
                 case 0:{
-                    if(listCont==null){
-                        try {
-                            System.err.println("valida");
-                            ctr.initConversation(cPeer.getInetAddress(),sem[1]);
+                    if(listCont==null && !waitRespInit){
+                        try {                            
+                            ctr.initConversation(cPeer.getInetAddress(),sem[1],true);
                             listCont = cPeer.getInetAddress();
                         } catch (IOException ex) {
                             Logger.getLogger(ManagerReceiver.class.getName()).log(Level.SEVERE, null, ex);
@@ -82,14 +84,21 @@ public class ManagerReceiver extends Thread{
                 }                    
                     break;
                     
+                case 1:{
+                    if(listCont==null && waitRespInit){
+                        try {
+                            ctr.initConversation(cPeer.getInetAddress(),sem[1],false);
+                            listCont = cPeer.getInetAddress();
+                        } catch (IOException ex) {
+                            Logger.getLogger(ManagerReceiver.class.getName()).log(Level.SEVERE, null, ex);
+                        }                        
+                    }
+                    break;
+                }    
                 case 2:
-                    System.err.println("OK");
                     break;
                     
                 case 3:
-                    break;
-                    
-                case 4:
                     break;
                 
                 default:break;
@@ -97,6 +106,8 @@ public class ManagerReceiver extends Thread{
             
         }
     }
+
+
     
     
 }
