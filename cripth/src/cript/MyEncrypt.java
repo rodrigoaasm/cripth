@@ -3,8 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package mycriprsa;
-
+package cript;
 
 
 import java.io.UnsupportedEncodingException;
@@ -20,7 +19,6 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
-import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 /**
@@ -29,7 +27,7 @@ import javax.crypto.spec.SecretKeySpec;
  */
 public class MyEncrypt {
     
-    public static byte[][] encode(PublicKey pk,String text) throws NoSuchAlgorithmException, InvalidKeyException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, UnsupportedEncodingException, NoSuchProviderException{
+    public static byte[][] encrypt(PublicKey pk,String text) throws NoSuchAlgorithmException, InvalidKeyException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, UnsupportedEncodingException, NoSuchProviderException{
         byte [] encryptedText;
         byte [] encryptedKeyAES;
         //Gerando chave AES
@@ -40,7 +38,7 @@ public class MyEncrypt {
         //Criptografando a informação em AES
         Cipher encryptCipherAES = Cipher.getInstance("AES");//Instaciando o AES
         encryptCipherAES.init(Cipher.ENCRYPT_MODE, aesKey);//Preparando o objeto AES
-        encryptedText = encryptCipherAES.doFinal(text.getBytes("ISO-8859-1"));//Croptografa a informação.
+        encryptedText = encryptCipherAES.doFinal(text.getBytes("ISO-8859-1"));//Criptografa a informação.
         
         //Criptografando a chave AES em RSA
         Cipher rsaEncode = Cipher.getInstance ("RSA");//Instaciando RSA
@@ -50,7 +48,7 @@ public class MyEncrypt {
         return(new byte[][]{encryptedText,encryptedKeyAES});        
     }
     
-    public static byte[] Decode(PrivateKey pk,byte [] encryptedText, byte[] encryptedKey) throws NoSuchAlgorithmException, InvalidKeyException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, UnsupportedEncodingException, InvalidAlgorithmParameterException, NoSuchProviderException{
+    public static byte[] decrypt(PrivateKey pk,byte [] encryptedText, byte[] encryptedKey) throws NoSuchAlgorithmException, InvalidKeyException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, UnsupportedEncodingException, InvalidAlgorithmParameterException, NoSuchProviderException{
         
         byte [] infoDecrypted;
         byte [] keyDecrypted;

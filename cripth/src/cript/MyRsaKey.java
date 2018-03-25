@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package mycriprsa;
+package cript;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -11,6 +11,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.UnsupportedEncodingException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
@@ -115,6 +116,17 @@ public class MyRsaKey {
              Logger.getLogger(MyRsaKey.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
+    //Retorna chave em modo texto.
+    public String getPublicKey() {
+        byte[] keyInByte = aPublic.getEncoded();//Converte key em um array de bytes
+        try {//Converte Array de bytes em String
+            return new String(keyInByte,"ISO-8859-1");
+        } catch (UnsupportedEncodingException ex) {
+            return "";
+        }
+    }
+    
     
     
 }
