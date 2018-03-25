@@ -48,11 +48,9 @@ class ManagerSend {
         ipServer = arrConv.getIp();
         client = new Socket(ipServer,4505);
         PrintWriter out = new PrintWriter(client.getOutputStream(), true);
-        
-        MyRsaKey rsa = MyRsaKey.newInstance();
-     
-        byte[][] msgEncrypt = MyEncrypt.encrypt(rsa.getPublicKey(),"MSG " + m.getCont());
-        String pct = new String(msgEncrypt[1],"ISO-8859-1")+ new String(msgEncrypt[0],"ISO-8859-1");
+            
+        byte[][] msgEncrypt = MyEncrypt.encrypt(arrConv.getpKeyCont(),"MSG " + m.getCont());
+        String pct = new String(msgEncrypt[1],"ISO-8859-1") + new String(msgEncrypt[0],"ISO-8859-1");
         System.err.println("***" + pct+ "***");
         
         out.print(pct);

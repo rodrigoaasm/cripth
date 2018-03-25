@@ -15,6 +15,7 @@ import java.net.InetAddress;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import model.Contact;
 import model.Conversation;
 import model.MyMessage;
 import tools.TreeWord;
@@ -38,7 +39,7 @@ public class ControlUi {
         
         ui = new InterfaceMessage(this);//Iniciado interface do app 
         ui.setVisible(true);
-        
+       
         RSAkey = MyRsaKey.newInstance();
         concOk= false;
         ms = new ManagerSend();
@@ -50,6 +51,7 @@ public class ControlUi {
             ui.msg("Erro na entrada da rede!", "Não foi possivel inicializar o modulo de receptor de rede ",
                     JOptionPane.ERROR_MESSAGE);
         }
+ 
     }
     
     public void requestConnection(String ipStr) throws IOException{ 

@@ -5,6 +5,7 @@
  */
 package model;
 
+import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
@@ -29,12 +30,10 @@ public class Conversation {
         listHistory = new ArrayList<MyMessage>();
         this.ip = ip;
         try {
-            pKeyCont = KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(pk.getBytes()));
-        } catch (NoSuchAlgorithmException ex) {
+            pKeyCont = KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(pk.getBytes("ISO-8859-1")));
+        } catch (Exception ex) {
             Logger.getLogger(Conversation.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InvalidKeySpecException ex) {
-            Logger.getLogger(Conversation.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        } 
     }
     
     public void addMessage(MyMessage m){
