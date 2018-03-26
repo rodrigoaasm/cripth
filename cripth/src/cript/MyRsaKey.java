@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
@@ -120,11 +121,13 @@ public class MyRsaKey {
     //Retorna chave publica em modo texto.
     public String getPublicKeyStringMode() {
         byte[] keyInByte = aPublic.getEncoded();//Converte key em um array de bytes
-        try {//Converte Array de bytes em String
+        try {
+            //Converte Array de bytes em String
             return new String(keyInByte,"UTF-8");
         } catch (UnsupportedEncodingException ex) {
-            return "";
+            Logger.getLogger(MyRsaKey.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return null;
     }
     
     //Retorna objeto publickey

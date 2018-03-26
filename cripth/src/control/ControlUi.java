@@ -12,6 +12,7 @@ import cript.MyRsaKey;
 import cript.limit.InterfaceMessage;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.nio.charset.Charset;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -39,7 +40,7 @@ public class ControlUi {
         
         ui = new InterfaceMessage(this);//Iniciado interface do app 
         ui.setVisible(true);
-       
+              
         RSAkey = MyRsaKey.newInstance();
         concOk= false;
         ms = new ManagerSend();

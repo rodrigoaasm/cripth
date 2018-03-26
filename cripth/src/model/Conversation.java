@@ -30,7 +30,7 @@ public class Conversation {
         listHistory = new ArrayList<MyMessage>();
         this.ip = ip;
         try {
-            pKeyCont = KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(pk.getBytes("ISO-8859-1")));
+            pKeyCont = KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(pk.getBytes("UTF-8")));
         } catch (Exception ex) {
             Logger.getLogger(Conversation.class.getName()).log(Level.SEVERE, null, ex);
         } 

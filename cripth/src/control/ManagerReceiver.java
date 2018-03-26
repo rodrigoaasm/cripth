@@ -5,6 +5,7 @@
  */
 package control;
 
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -40,8 +41,9 @@ public class ManagerReceiver extends Thread{
     @Override
     public void run(){
         Socket cPeer = null;
-        Scanner scanner = null;
+        String data = "";
         String dataSem = "";
+        DataInputStream scan = null;
         
         while(true){
             try {
@@ -51,25 +53,37 @@ public class ManagerReceiver extends Thread{
             }
             
             try {
-                scanner = new Scanner(cPeer.getInputStream());
+                
+                scan = new DataInputStream(cPeer.getInputStream());
             } catch (IOException ex) {
                 Logger.getLogger(ManagerReceiver.class.getName()).log(Level.SEVERE, null, ex);
             }                
             
-            dataSem = "";
-            while (scanner.hasNextLine()) {//Recebendo semantica do mySCRM
-                dataSem += scanner.nextLine();
+          
+                    
+            try {
+                dataSem = scan.readUTF(); 
+                data = scan.readUTF();                
+            } catch (IOException ex) {
+                Logger.getLogger(ManagerReceiver.class.getName()).log(Level.SEVERE, null, ex);
             }
             
-            String [] sem = dataSem.split(" ",2);//Dividido semántica
+          /*  while (scanner.hasNextLine()) {//Recebendo semantica do mySCRM
+                dataSem += (scanner.nextLine()) +"\n";
+            }*/
+            
+            /*String [] sem = dataSem.split(" ",2);//Dividido semántica
             System.out.println("--------Recebido------\n" + dataSem +"\n-------------------");
-            sem[0]+=" ";            
-            switch(tWord.scanWord(sem[0])){//Intepretando comando mySCRM                
+            sem[0]+=" ";   */  
+
+            System.out.println(dataSem + tWord.scanWord(dataSem));
+            switch(tWord.scanWord(dataSem)){//Intepretando comando mySCRM  
+                
                 case 0:{//Recebendo um pedido de conexão
                     if(listCont==null && !waitRespInit){/*Se o sistema não estiver esperando
                         uma resposta de conexão e não tiver nenhuma conexão ativa*/
                         try {                            
-                            ctr.initConversation(cPeer.getInetAddress(),sem[1],true);//Inicia uma conversão e retorna positivo
+                            ctr.initConversation(cPeer.getInetAddress(),data,true);//Inicia uma conversão e retorna positivo
                             listCont = cPeer.getInetAddress();
                         } catch (IOException ex) {
                             Logger.getLogger(ManagerReceiver.class.getName()).log(Level.SEVERE, null, ex);
@@ -87,7 +101,7 @@ public class ManagerReceiver extends Thread{
                 case 1:{//Recebendo confirmação de conexão
                     if(listCont==null && waitRespInit){
                         try {
-                            ctr.initConversation(cPeer.getInetAddress(),sem[1],false);//Inicia conversa 
+                            ctr.initConversation(cPeer.getInetAddress(),data,false);//Inicia conversa 
                             listCont = cPeer.getInetAddress();
                         } catch (IOException ex) {
                             Logger.getLogger(ManagerReceiver.class.getName()).log(Level.SEVERE, null, ex);
