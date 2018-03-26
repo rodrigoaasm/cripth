@@ -34,9 +34,7 @@ class ManagerSend {
     public void first(InetAddress ip, String key, String cab) throws IOException{
         ipServer = ip;
         client = new Socket(ipServer,4505);
-        
-       
-        
+
         //System.out.print(key);
         DataOutputStream out = new DataOutputStream(client.getOutputStream());
        // BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream())); 
@@ -51,16 +49,16 @@ class ManagerSend {
         ipServer = InetAddress.getByName(ip);
     }
 
-    void sendMsg(MyMessage m, Conversation arrConv) throws Exception {
+    void sendMsg(MyMessage m, Conversation arrConv,MyRsaKey rsakey) throws Exception {
         ipServer = arrConv.getIp();
         client = new Socket(ipServer,4505);
-        PrintWriter out = new PrintWriter(client.getOutputStream(), true);
+        DataOutputStream out = new DataOutputStream(client.getOutputStream());
             
-        byte[][] msgEncrypt = MyEncrypt.encrypt(arrConv.getpKeyCont(),"MSG " + m.getCont());
-        String pct = new String(msgEncrypt[1],"UTF-8") + new String(msgEncrypt[0],"UTF-8");
-        System.err.println("***" + pct+ "***");
+        byte[][] msgEncrypt = MyEncrypt.encrypt(rsakey.getPublicKey(),"MSG " + m.getCont());
+        String pct = new String(msgEncrypt[1],"ISO-8859-1") + new String(msgEncrypt[0],"ISO-8859-1");
+        System.err.println(pct);
         
-        out.print(pct);
+        out.writeUTF(pct);
         out.flush();
         out.close();
     }

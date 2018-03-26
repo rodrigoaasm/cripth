@@ -44,6 +44,10 @@ public class Conversation {
         return pKeyCont;
     }
 
+    public ArrayList<MyMessage> getListHistory() {
+        return listHistory;
+    }    
+    
     public InetAddress getIp() {
         return ip;
     } 

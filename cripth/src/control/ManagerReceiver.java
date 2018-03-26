@@ -60,21 +60,16 @@ public class ManagerReceiver extends Thread{
             }                
             
           
-                    
-            try {
-                dataSem = scan.readUTF(); 
-                data = scan.readUTF();                
+            try {    
+                dataSem = scan.readUTF();
             } catch (IOException ex) {
                 Logger.getLogger(ManagerReceiver.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
-          /*  while (scanner.hasNextLine()) {//Recebendo semantica do mySCRM
-                dataSem += (scanner.nextLine()) +"\n";
-            }*/
-            
-            /*String [] sem = dataSem.split(" ",2);//Dividido semántica
-            System.out.println("--------Recebido------\n" + dataSem +"\n-------------------");
-            sem[0]+=" ";   */  
+            try {                
+                data = scan.readUTF();                
+            } catch (IOException ex) {
+                
+            }
 
             System.out.println(dataSem + tWord.scanWord(dataSem));
             switch(tWord.scanWord(dataSem)){//Intepretando comando mySCRM  
@@ -111,7 +106,7 @@ public class ManagerReceiver extends Thread{
                 }    
                 
                 default:{
-                    if(listCont == cPeer.getInetAddress()){
+                    if(listCont == cPeer.getInetAddress()){                      
                         ctr.toAnalyzePossibleMessage(dataSem);
                     }
                 }

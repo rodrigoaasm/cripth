@@ -66,7 +66,7 @@ public class ControlUi {
         MyMessage m = new MyMessage(txt,0,0);
 //        arrConv.addMessage(m);
         try {
-            ms.sendMsg(m,arrConv);
+            ms.sendMsg(m,arrConv,RSAkey);
         } catch (Exception ex) {
             Logger.getLogger(ControlUi.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -86,11 +86,11 @@ public class ControlUi {
     }
 
     void toAnalyzePossibleMessage(String dataSem) {        
-        String keyAES = dataSem.substring(0, 255);
+        String keyAES = dataSem.substring(0, 256);
         String cont = dataSem.substring(256);
         try {            
             cont = new String( MyEncrypt.decrypt(RSAkey.getPrivateKey(),
-                    cont.getBytes(),keyAES.getBytes()),"UTF-8");
+                    cont.getBytes("ISO-8859-1"),keyAES.getBytes("ISO-8859-1")),"UTF-8");
         } catch (Exception ex) {
             Logger.getLogger(ControlUi.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -99,7 +99,9 @@ public class ControlUi {
         
         switch(tWord.scanWord(subCont[0])){
             case 2:{
-                System.out.println(subCont[1]);
+                MyMessage m = new MyMessage(subCont[1],0,0);
+                arrConv.addMessage(m);
+                ui.updateChat(arrConv.getListHistory());
             }
             
             default:
