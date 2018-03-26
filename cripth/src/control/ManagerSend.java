@@ -42,6 +42,7 @@ class ManagerSend {
        // BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream())); 
         out.writeUTF(cab);
         out.writeUTF(key);
+        System.out.println(key);
         out.flush();        
         client.close();
     }

@@ -123,7 +123,7 @@ public class MyRsaKey {
         byte[] keyInByte = aPublic.getEncoded();//Converte key em um array de bytes
         try {
             //Converte Array de bytes em String
-            return new String(keyInByte,"UTF-8");
+            return new String(keyInByte,"ISO-8859-1");
         } catch (UnsupportedEncodingException ex) {
             Logger.getLogger(MyRsaKey.class.getName()).log(Level.SEVERE, null, ex);
         }

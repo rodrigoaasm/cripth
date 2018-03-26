@@ -52,7 +52,7 @@ public class ControlUi {
             ui.msg("Erro na entrada da rede!", "Não foi possivel inicializar o modulo de receptor de rede ",
                     JOptionPane.ERROR_MESSAGE);
         }
- 
+        
     }
     
     public void requestConnection(String ipStr) throws IOException{ 
