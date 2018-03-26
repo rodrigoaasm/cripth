@@ -96,14 +96,13 @@ public class TreeWord {
     /*Faz a comparação se uma letra está contida em uma palavra, a entrada da palavra é 
     feita de chamada a chamada*/
     public int scanSimple(char c){   
-        System.err.println(c);
         try{
             lastNode = linearSearch(lastNode, c);//Busca a letra na lista de nós filhos
             statusScan = IN_RECOGNITION;//Se o nó em questão não for final, defini o estado como "Em Reconhecimento"
         }catch(Exception e){//Caso seja final defini se a palavra é conhecida ou não.  
             
             if(c == ' ' && statusScan == IN_RECOGNITION && lastNode.isFinal()){
-                System.err.println("Reconhecido");
+          
                 statusScan = RECOGNIZED;
                 int id = lastNode.getId();//Se reconhecida a palvra retona o id dela presente no ultimo nó
                 lastNode = p;                

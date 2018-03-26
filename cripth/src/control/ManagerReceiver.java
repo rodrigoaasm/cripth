@@ -62,7 +62,7 @@ public class ManagerReceiver extends Thread{
             }
             
             String [] sem = dataSem.split(" ",2);//Dividido semántica
-            
+            System.out.println("--------Recebido------\n" + dataSem +"\n-------------------");
             sem[0]+=" ";            
             switch(tWord.scanWord(sem[0])){//Intepretando comando mySCRM                
                 case 0:{//Recebendo um pedido de conexão

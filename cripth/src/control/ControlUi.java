@@ -89,12 +89,12 @@ public class ControlUi {
         String cont = dataSem.substring(256);
         try {            
             cont = new String( MyEncrypt.decrypt(RSAkey.getPrivateKey(),
-                    cont.getBytes(),keyAES.getBytes()),"ISO-8859-1");
+                    cont.getBytes(),keyAES.getBytes()),"UTF-8");
         } catch (Exception ex) {
             Logger.getLogger(ControlUi.class.getName()).log(Level.SEVERE, null, ex);
         }
         System.out.println(cont);
-        String[] subCont = cont.split(" ");
+        String[] subCont = cont.split(" ",2);
         
         switch(tWord.scanWord(subCont[0])){
             case 2:{

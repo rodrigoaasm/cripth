@@ -34,7 +34,8 @@ class ManagerSend {
         client = new Socket(ipServer,4505);
         
         PrintWriter out = new PrintWriter(client.getOutputStream(), true);
-       // BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));        
+       // BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));   
+        System.out.println("------Enviado\n" + key+ "\n--------------");
         out.println(cab + key);
         out.flush();        
         client.close();
@@ -50,7 +51,7 @@ class ManagerSend {
         PrintWriter out = new PrintWriter(client.getOutputStream(), true);
             
         byte[][] msgEncrypt = MyEncrypt.encrypt(arrConv.getpKeyCont(),"MSG " + m.getCont());
-        String pct = new String(msgEncrypt[1],"ISO-8859-1") + new String(msgEncrypt[0],"ISO-8859-1");
+        String pct = new String(msgEncrypt[1],"ISO-8859-1") + new String(msgEncrypt[0],"UTF-8");
         System.err.println("***" + pct+ "***");
         
         out.print(pct);
